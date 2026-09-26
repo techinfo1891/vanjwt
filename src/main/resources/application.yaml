@@ -1,3 +1,27 @@
 spring:
   application:
     name: vanjwt
+
+# Spring Boot automatically handles creation of the H2 DB instance 
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+
+# Enables the H2 web console interface at http://localhost:8080/h2-console
+  h2:
+    console:
+      enabled: true
+
+# Spring Boot defaults this to 'create-drop' for embedded databases to auto-generate tables
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      
+#user roles
+role.admin: ADMIN
+role.user: USER
+
+server:
+  port: 8086
