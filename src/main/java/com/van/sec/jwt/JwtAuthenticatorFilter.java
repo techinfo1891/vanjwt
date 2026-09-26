@@ -17,11 +17,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class JwtAuthenticatorFilter extends OncePerRequestFilter {
-
+public class JwtAuthenticatorFilter extends OncePerRequestFilter{
+	
 	private final JwtUtil jwtUtil;
 	private final CustomerUserDetailsService customerUserDetailsService;
-
+	
 	public JwtAuthenticatorFilter(JwtUtil jwtUtil, CustomerUserDetailsService customerUserDetailsService) {
 		this.jwtUtil = jwtUtil;
 		this.customerUserDetailsService = customerUserDetailsService;
@@ -30,27 +30,31 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-
+		// TODO Auto-generated method stub
+		
 		String token = request.getHeader("Authorization");
-		if (null != token && token.startsWith("Bearer ")) {
+		if(token !=null && token.startsWith("Bearer")) {
 			token = token.substring(7);
 			String username = jwtUtil.extractUsername(token);
-
-			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-				
+			
+			if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				UserDetails userDetails = customerUserDetailsService.loadUserByUsername(username);
 				
 				if(jwtUtil.isTokenValid(token)) {
 					
-					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+					UsernamePasswordAuthenticationToken authtoken = new UsernamePasswordAuthenticationToken(userDetails, 
 							null, userDetails.getAuthorities());
-					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					authtoken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 					
-					SecurityContextHolder.getContext().setAuthentication(authToken);
+					SecurityContextHolder.getContext().setAuthentication(authtoken);
 				}
+				
 			}
+			
 		}
 		filterChain.doFilter(request, response);
+		
 	}
-
+	
 }
+
